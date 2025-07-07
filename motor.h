@@ -18,8 +18,8 @@ class Motor {
     static constexpr int PIN_ENB = 6;
 
     void forward_left() {
-        pinMode(PIN_IN1, HIGH);
-        pinMode(PIN_IN2, LOW);
+        digitalWrite(PIN_IN1, HIGH);
+        digitalWrite(PIN_IN2, LOW);
     }
 
     void set_speed_left(int speed) {
@@ -27,8 +27,8 @@ class Motor {
     }
 
     void forward_right() {
-        pinMode(PIN_IN3, HIGH);
-        pinMode(PIN_IN4, LOW);
+        digitalWrite(PIN_IN3, HIGH);
+        digitalWrite(PIN_IN4, LOW);
     }
 
     void set_speed_right(int speed) {
@@ -36,23 +36,23 @@ class Motor {
     }
 
     void reverse_left() {
-        pinMode(PIN_IN1, LOW);
-        pinMode(PIN_IN2, HIGH);
+        digitalWrite(PIN_IN1, LOW);
+        digitalWrite(PIN_IN2, HIGH);
     }
 
     void reverse_right() {
-        pinMode(PIN_IN3, LOW);
-        pinMode(PIN_IN4, HIGH);
+        digitalWrite(PIN_IN3, LOW);
+        digitalWrite(PIN_IN4, HIGH);
     }
 
     void brake_left() {
-        pinMode(PIN_IN1, HIGH);
-        pinMode(PIN_IN2, HIGH);
+        digitalWrite(PIN_IN1, HIGH);
+        digitalWrite(PIN_IN2, HIGH);
     }
 
     void brake_right() {
-        pinMode(PIN_IN3, HIGH);
-        pinMode(PIN_IN4, HIGH);
+        digitalWrite(PIN_IN3, HIGH);
+        digitalWrite(PIN_IN4, HIGH);
     }
 
    public:
