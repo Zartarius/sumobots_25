@@ -1,0 +1,98 @@
+#pragma once
+
+namespace Motor {
+class Motor {
+   private:
+    // todo: put values here for pins
+    // motor 1 - assumed left
+    static constexpr int PIN_IN1 = 1;
+    static constexpr int PIN_IN2 = 2;
+
+    // motor 2 - assumed right
+    static constexpr int PIN_IN3 = 3;
+    static constexpr int PIN_IN4 = 4;
+
+    static constexpr int PIN_ENA = 5;
+    static constexpr int PIN_ENB = 6;
+
+    void forward_left() {
+        pinMode(PIN_IN1, HIGH);
+        pinMode(PIN_IN2, LOW);
+    }
+
+    void set_speed_left(int speed) {
+        analogWrite(PIN_ENA, speed);
+    }
+
+    void forward_right() {
+        pinMode(PIN_IN3, HIGH);
+        pinMode(PIN_IN4, LOW);
+    }
+
+    void set_speed_right(int speed) {
+        analogWrite(PIN_ENB, speed);
+    }
+
+    void reverse_left() {
+        pinMode(PIN_IN1, LOW);
+        pinMode(PIN_IN2, HIGH);
+    }
+
+    void reverse_right() {
+        pinMode(PIN_IN3, LOW);
+        pinMode(PIN_IN4, HIGH);
+    }
+
+    void brake_left() {
+        pinMode(PIN_IN1, HIGH);
+        pinMode(PIN_IN2, HIGH);
+    }
+
+    void brake_right() {
+        pinMode(PIN_IN3, HIGH);
+        pinMode(PIN_IN4, HIGH);
+    }
+
+   public:
+    //        ~Motor() = default;
+    Motor() {
+        pinMode(PIN_IN1, OUTPUT);
+        pinMode(PIN_IN2, OUTPUT);
+        pinMode(PIN_IN3, OUTPUT);
+        pinMode(PIN_IN4, OUTPUT);
+        pinMode(PIN_ENA, OUTPUT);
+        pinMode(PIN_ENB, OUTPUT);
+    }
+
+    void forward(int speed) {
+        set_speed_left(speed);
+        set_speed_right(speed);
+        forward_left();
+        forward_right();
+    }
+
+    void reverse(int speed) {
+        set_speed_left(speed);
+        set_speed_right(speed);
+        reverse_left();
+        reverse_right();
+    }
+
+    void turn_left(int speed) {
+        set_speed_left(speed);
+        set_speed_right(0);
+        forward_left();
+    }
+
+    void turn_right(int speed) {
+        set_speed_left(0);
+        set_speed_right(speed);
+        forward_right();
+    }
+    
+    void brake() {
+        brake_left();
+        brake_right();
+    }
+};
+}  // namespace Motor
