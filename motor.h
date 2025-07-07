@@ -55,7 +55,7 @@ class Motor {
 
    public:
     //        ~Motor() = default;
-    Motor() {
+    Motor(void) {
         pinMode(PIN_IN1, OUTPUT);
         pinMode(PIN_IN2, OUTPUT);
         pinMode(PIN_IN3, OUTPUT);
@@ -64,28 +64,28 @@ class Motor {
         pinMode(PIN_ENB, OUTPUT);
     }
 
-    void forward(int speed) {
+    void drive_forward(const int speed) {
         set_speed_left(speed);
         set_speed_right(speed);
         forward_left();
         forward_right();
     }
 
-    void reverse(int speed) {
+    void drive_reverse(const int speed) {
         set_speed_left(speed);
         set_speed_right(speed);
         reverse_left();
         reverse_right();
     }
 
-    void turn_left(int speed) {
+    void pivot_left(const int speed) {
         set_speed_left(speed);
         set_speed_right(speed);
         forward_left();
         reverse_right();
     }
 
-    void turn_right(int speed) {
+    void pivot_right(const int speed) {
         set_speed_left(speed);
         set_speed_right(speed);
         forward_right();
