@@ -80,14 +80,16 @@ class Motor {
 
     void turn_left(int speed) {
         set_speed_left(speed);
-        set_speed_right(0);
+        set_speed_right(speed);
         forward_left();
+        reverse_right();
     }
 
     void turn_right(int speed) {
-        set_speed_left(0);
+        set_speed_left(speed);
         set_speed_right(speed);
         forward_right();
+        reverse_left();
     }
     
     void brake() {
