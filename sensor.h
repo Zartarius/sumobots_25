@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 namespace Sensor {
 
 class USSensor {
