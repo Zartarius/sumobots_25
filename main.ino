@@ -16,7 +16,7 @@ void setup(void) {
 
 void loop(void) {
   /*
-  while (front sensor detects object == true) {
+  while (front sensor detects object == true && IR sensor does NOT detect tape) {
       move forward
   }
 
@@ -24,4 +24,6 @@ void loop(void) {
       sweeping motion
   }
   */
+
+  
 }
