@@ -35,9 +35,7 @@ class USSensor {
 
 class IRSensor {
   private:
-    const int 
   public:
-
 };
 
 
