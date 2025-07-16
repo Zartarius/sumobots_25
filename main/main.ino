@@ -159,9 +159,12 @@ void loop(void) {
    //    motor.drive_reverse(REVERSE_SPEED);
    // }
 
-   for (float time = PIVOT_TIME; time < 1000000; time += PIVOT_TIME) {
+   for (float time = PIVOT_TIME; time < 1000000 && (sensor.get_distance() > MAX_DIST); time += PIVOT_TIME) {
       // motor.pivot_right for time
+      // motor.brake()
       // motor.pivot_left for 2 * time
+      // motor.brake()
       // motor.pivot_right for time
+      // motor.brake()
    }
 }
