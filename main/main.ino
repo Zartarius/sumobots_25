@@ -135,7 +135,7 @@ USSensor us_sensor;
 static const float MAX_DIST = 100.0;
 static const float FORWARD_SPEED = 69.0; // to change
 static const float REVRSE_SPEED = 69.0; // to change
-static const float PIVOT_TIME = 1.0; // to change
+static const unsigned long PIVOT_TIME = 100; // to change
 
 void setup(void) {
   Serial.begin(9600);
