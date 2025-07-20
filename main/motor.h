@@ -3,16 +3,17 @@
 
 
 namespace Motor {
-bool do_for(const int movement, const int speed, 
-            const unsigned long ms_delay) {
-  const unsigned long start = millis();
+bool do_for(const int movement, const int speed, const unsigned long ms_delay) {
   if (movement == 0) {
       motor.pivot_left();
   } else if (movement == 1) {   
       motor.pivot_right();
   }
+            
+  const unsigned long start = millis();
   float distance;
   while ((distance = sensor.get_distance()) > MAX_DIST && (millis() - start) < ms_delay) {}
+            
   return distance <= MAX_DIST;
 }
 
