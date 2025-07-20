@@ -1,7 +1,10 @@
 #include <Arduino.h>
 
+using namespace Motor, Sensor;
+
 Motor motor;
 USSensor us_sensor;
+IRsensor ir_sensor;
 
 static constexpr float MAX_DIST = 100.0;
 static constexpr float FORWARD_SPEED = 69.0; // to change
@@ -17,7 +20,7 @@ void setup(void) {
 
 void loop(void) {
     float distance;
-    while ((distance = sensor.get_distance()) <= MAX_DIST /*&& IRsensor doesn't detect tape*/) {
+    while ((distance = us_sensor.get_distance()) <= MAX_DIST /*&& IRsensor doesn't detect tape*/) {
        motor.drive_forward(FORWARD_SPEED - distance); // Increase speed as it gets closer?
     }
    
