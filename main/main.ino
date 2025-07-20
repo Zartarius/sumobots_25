@@ -21,7 +21,7 @@ void loop(void) {
     float distance;
     // Keep driving forward while opponent is in view and white tape isn't detected
     while ((distance = us_sensor.get_distance()) <= MAX_DIST && !ir_sensor.get_signal()) {
-       motor.drive_forward(FORWARD_SPEED - distance); 
+       motor.drive_forward((MAX_DIST - distance) * (MAX_DIST - distance) + FORWARD_SPEED); 
     }
    
     motor.brake();
