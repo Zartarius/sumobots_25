@@ -20,15 +20,17 @@ void setup(void) {
 
 void loop(void) {
     float distance;
-    while ((distance = us_sensor.get_distance()) <= MAX_DIST /*&& IRsensor doesn't detect tape*/) {
+    while ((distance = us_sensor.get_distance()) <= MAX_DIST && !ir_sensor.get_signal()) {
        motor.drive_forward(FORWARD_SPEED - distance); // Increase speed as it gets closer?
     }
    
     motor.brake();
     
-    // if (IR sensor detects tape) {
-    //    motor.drive_reverse(REVERSE_SPEED);
-    // }
+    if (ir_sensor.get_signal()) {
+        do_for(motor, us_sensor, &Motor::Motor::drive_reverse, REVERSE_SPEED, 500);
+        motor.brake();
+    }
+    
     unsigned long time = PIVOT_TIME;
 
     while (time < 3000) {
