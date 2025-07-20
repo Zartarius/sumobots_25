@@ -9,6 +9,7 @@ IRsensor ir_sensor;
 static constexpr float MAX_DIST = 100.0;
 static constexpr float FORWARD_SPEED = 69.0; // to change
 static constexpr float REVRSE_SPEED = 69.0; // to change
+static constexpr float PIVOT_SPEED = 69.0; // to change
 static constexpr unsigned long PIVOT_TIME = 100; // to change
 static constexpr int PIVOT_LEFT = 0;
 static constexpr int PIVOT_RIGHT = 1;
@@ -34,15 +35,23 @@ void loop(void) {
     unsigned long time = PIVOT_TIME;
 
     while (time < 3000) {
-        // motor.pivot_right for time
-        // motor.brake()
-        // motor.pivot_left for 2 * time
-        // motor.brake()
-        // motor.pivot_right for time
-        // motor.brake()
+        if (do_for(motor, us_sensor, &Motor::Motor::pivot_right, PIVOT_SPEED, time)) {
+            break;
+        }
+        motor.brake();
+      
+        if (do_for(motor, us_sensor, &Motor::Motor::pivot_left, PIVOT_SPEED, time + time)) {
+            break;
+        }
+        motor.brake();
+
+        if (do_for(motor, us_sensor, &Motor::Motor::pivot_right, PIVOT_SPEED, time)) {
+            break;
+        }
+        motor.brake();
 
         time += PIVOT_TIME;
     }
-
+          
     motor.brake();
 }
