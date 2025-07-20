@@ -16,26 +16,28 @@ void setup(void) {
 }
 
 void loop(void) {
-  // Serial.println(sensor.get_distance());
-   {
-      float distance;
-      while ((distance = sensor.get_distance()) <= MAX_DIST /*&& IRsensor doesn't detect tape*/) {
-         motor.drive_forward(FORWARD_SPEED - distance); // Increase speed as it gets closer?
-      }
-   }
+    float distance;
+    while ((distance = sensor.get_distance()) <= MAX_DIST /*&& IRsensor doesn't detect tape*/) {
+       motor.drive_forward(FORWARD_SPEED - distance); // Increase speed as it gets closer?
+    }
    
-   motor.brake();
-   
-   // if (IR sensor detects tape) {
-   //    motor.drive_reverse(REVERSE_SPEED);
-   // }
+    motor.brake();
+    
+    // if (IR sensor detects tape) {
+    //    motor.drive_reverse(REVERSE_SPEED);
+    // }
+    unsigned long time = PIVOT_TIME;
 
-   for (float time = PIVOT_TIME; time < 1000000 && (sensor.get_distance() > MAX_DIST); time += PIVOT_TIME) {
-      // motor.pivot_right for time
-      // motor.brake()
-      // motor.pivot_left for 2 * time
-      // motor.brake()
-      // motor.pivot_right for time
-      // motor.brake()
-   }
+    while (time < 3000) {
+        // motor.pivot_right for time
+        // motor.brake()
+        // motor.pivot_left for 2 * time
+        // motor.brake()
+        // motor.pivot_right for time
+        // motor.brake()
+
+        time += PIVOT_TIME;
+    }
+
+    motor.brake();
 }
