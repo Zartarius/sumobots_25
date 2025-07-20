@@ -8,7 +8,7 @@ namespace Motor {
 // redundant depending on where this function is used.
 bool do_for(Motor& motor, 
             Sensor::USsensor& sensor,  
-            void (Motor::Motor::*action)(const int),
+            void (Motor::*action)(const int),
             const int speed,
             const unsigned long ms_delay) {
   
