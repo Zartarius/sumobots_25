@@ -21,19 +21,21 @@ void setup(void) {
 
 void loop(void) {
     float distance;
+    // Keep driving forward while opponent is in view and white tape isn't detected
     while ((distance = us_sensor.get_distance()) <= MAX_DIST && !ir_sensor.get_signal()) {
-       motor.drive_forward(FORWARD_SPEED - distance); // Increase speed as it gets closer?
+       motor.drive_forward(FORWARD_SPEED - distance); 
     }
    
     motor.brake();
-    
+
+    // If robot is at the edge, drive in reverse, this will save it in MOST cases
     if (ir_sensor.get_signal()) {
         do_for(motor, us_sensor, &Motor::Motor::drive_reverse, REVERSE_SPEED, 500);
         motor.brake();
     }
     
     unsigned long time = PIVOT_TIME;
-
+    // Opponent detecting logic
     while (time < 3000) {
         if (do_for(motor, us_sensor, &Motor::Motor::pivot_right, PIVOT_SPEED, time)) {
             break;
