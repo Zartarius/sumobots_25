@@ -37,7 +37,16 @@ class USSensor {
 
 class IRSensor {
   private:
+    int signal_pin_;
   public:
+    IRSensor(void) = default;
+    IRSensor(int signal_pin) : signal_pin_{signal_pin} {
+      pinMode(signal_pin_, INPUT);
+    }
+
+    bool get_signal() {
+      return digitalRead(signal_pin_);
+    }
 };
 }
 
