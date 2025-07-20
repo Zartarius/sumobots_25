@@ -3,13 +3,16 @@
 
 
 namespace Motor {
-bool do_for(const int movement, const int speed, const unsigned long ms_delay) {
-  if (movement == 0) {
-      motor.pivot_left();
-  } else if (movement == 1) {   
-      motor.pivot_right();
-  }
-            
+// Peform the specified member function for a given amount of time
+// Return true if the sensor detects anything -> This may be 
+// redundant depending on where this function is used.
+bool do_for(Motor& motor, 
+            Sensor::USsensor& sensor,  
+            void (Motor::Motor::*action)(const int),
+            const int speed,
+            const unsigned long ms_delay) {
+  
+  (motor.*action)(speed);     
   const unsigned long start = millis();
   float distance;
   while ((distance = sensor.get_distance()) > MAX_DIST && (millis() - start) < ms_delay) {}
