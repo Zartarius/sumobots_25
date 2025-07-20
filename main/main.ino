@@ -3,17 +3,17 @@
 Motor motor;
 USSensor us_sensor;
 
-static const float MAX_DIST = 100.0;
-static const float FORWARD_SPEED = 69.0; // to change
-static const float REVRSE_SPEED = 69.0; // to change
-static const unsigned long PIVOT_TIME = 100; // to change
+static constexpr float MAX_DIST = 100.0;
+static constexpr float FORWARD_SPEED = 69.0; // to change
+static constexpr float REVRSE_SPEED = 69.0; // to change
+static constexpr unsigned long PIVOT_TIME = 100; // to change
+static constexpr int PIVOT_LEFT = 0;
+static constexpr int PIVOT_RIGHT = 1;
 
 void setup(void) {
   Serial.begin(9600);
   us_sensor = USSensor(6,5);
 }
-
-
 
 void loop(void) {
   // Serial.println(sensor.get_distance());
