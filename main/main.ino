@@ -8,7 +8,7 @@ using namespace Sensor;
 
 Motor motor;
 USSensor us_sensor;
-IRsensor ir_sensor;
+IRSensor ir_sensor;
 
 static constexpr float MAX_DIST = 100.0;
 static constexpr float FORWARD_SPEED = 69.0; // to change
