@@ -1,4 +1,7 @@
 #include <Arduino.h>
+#include "Motor.h"
+#include "Sensor.h"
+
 
 using namespace Motor, Sensor;
 
