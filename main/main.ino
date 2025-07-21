@@ -31,7 +31,33 @@ void loop(void) {
         do_for(motor, us_sensor, &Motor::Motor::drive_reverse, REVERSE_SPEED, 500);
         motor.brake();
     }
-    
+
+    unsigned long epoch = millis();
+    unsigned long inner_epoch = millis();
+    float time_mul = 1;
+    // Only run opponent detection while within timeout and in bounds
+    while (!ir_sensor.get_signal() && 
+            (millis() - epoch) < FULL_360_TIME && // timeout, could be removed
+            (distance = us_sensor.get_distance()) > MAX_DIST) 
+    {
+        unsigned long delta = millis() - inner_epoch;
+        if (delta < PIVOT_TIME*time_mul) {
+            motor.pivot_right(PIVOT_SPEED);
+        } else if (delta < 3*PIVOT_TIME*time_mul) {
+            motor.pivot_left(PIVOT_SPEED);
+        } else if (delta < 4*PIVOT_TIME*time_mul) {
+            motor.pivot_right(PIVOT_SPEED);
+        } else {
+            time_mul += 0.5;
+            inner_epoch = millis();
+        }
+    }
+          
+    motor.brake();
+}
+
+
+    /*
     unsigned long time = PIVOT_TIME;
     // Opponent detecting logic
     while (time < 3000) {
@@ -52,6 +78,4 @@ void loop(void) {
 
         time += PIVOT_TIME;
     }
-          
-    motor.brake();
-}
+    */
