@@ -7,7 +7,7 @@ using namespace Motor;
 using namespace Sensor;
 
 Motor motor;
-USSensor us_sensor;
+USSensor us_sensor = USSensor(6, 5);
 IRSensor ir_sensor;
 
 static constexpr float MAX_DIST = 100.0;
@@ -19,7 +19,7 @@ static constexpr unsigned long FULL_360_TIME = 3000;
 
 void setup(void) {
     Serial.begin(9600);
-    us_sensor = USSensor(6,5);
+    // us_sensor = USSensor(6,5);
     // Start after 5 seconds
     delay(5000); 
 }
