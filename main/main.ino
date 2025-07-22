@@ -4,10 +4,10 @@
 
 static constexpr float MAX_DIST = 100.0;
 static constexpr float SLOW_DOWN_DIST = 30.0;
-static constexpr float FORWARD_MAX_SPEED = 69.0; 
-static constexpr float FORWARD_MIN_SPEED = 69.0; 
-static constexpr float REVERSE_SPEED = 69.0; 
-static constexpr float PIVOT_SPEED = 69.0; 
+static constexpr int FORWARD_MAX_SPEED = 255; 
+static constexpr int FORWARD_MIN_SPEED = 64; 
+static constexpr int REVERSE_SPEED = 64; 
+static constexpr int PIVOT_SPEED = 64; 
 static constexpr unsigned long PIVOT_TIME = 100; 
 static constexpr unsigned long FULL_360_TIME = 3000;
 
