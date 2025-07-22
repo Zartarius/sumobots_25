@@ -2,14 +2,6 @@
 #include "Motor.h"
 #include "Sensor.h"
 
-
-using namespace Motor;
-using namespace Sensor;
-
-Motor motor;
-USSensor us_sensor = USSensor(6, 5);
-IRSensor ir_sensor;
-
 static constexpr float MAX_DIST = 100.0;
 static constexpr float SLOW_DOWN_DIST = 30.0;
 static constexpr float FORWARD_MAX_SPEED = 69.0; 
@@ -18,6 +10,13 @@ static constexpr float REVERSE_SPEED = 69.0;
 static constexpr float PIVOT_SPEED = 69.0; 
 static constexpr unsigned long PIVOT_TIME = 100; 
 static constexpr unsigned long FULL_360_TIME = 3000;
+
+using namespace Motor;
+using namespace Sensor;
+
+Motor motor;
+USSensor us_sensor = USSensor(6, 5);
+IRSensor ir_sensor;
 
 void setup(void) {
     Serial.begin(9600);
