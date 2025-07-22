@@ -15,6 +15,7 @@ static constexpr float FORWARD_SPEED = 69.0; // to change
 static constexpr float REVERSE_SPEED = 69.0; // to change
 static constexpr float PIVOT_SPEED = 69.0; // to change
 static constexpr unsigned long PIVOT_TIME = 100; // to change
+static constexpr unsigned long FULL_360_TIME = 3000;
 
 void setup(void) {
     Serial.begin(9600);
