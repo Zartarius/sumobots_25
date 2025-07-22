@@ -17,8 +17,10 @@ static constexpr float PIVOT_SPEED = 69.0; // to change
 static constexpr unsigned long PIVOT_TIME = 100; // to change
 
 void setup(void) {
-  Serial.begin(9600);
-  us_sensor = USSensor(6,5);
+    Serial.begin(9600);
+    us_sensor = USSensor(6,5);
+    // Start after 5 seconds
+    delay(5000); 
 }
 
 void loop(void) {
