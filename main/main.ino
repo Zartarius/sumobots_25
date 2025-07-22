@@ -11,15 +11,16 @@ USSensor us_sensor = USSensor(6, 5);
 IRSensor ir_sensor;
 
 static constexpr float MAX_DIST = 100.0;
-static constexpr float FORWARD_SPEED = 69.0; // to change
-static constexpr float REVERSE_SPEED = 69.0; // to change
-static constexpr float PIVOT_SPEED = 69.0; // to change
-static constexpr unsigned long PIVOT_TIME = 100; // to change
+static constexpr float SLOW_DOWN_DIST = 30.0;
+static constexpr float FORWARD_MAX_SPEED = 69.0; 
+static constexpr float FORWARD_MIN_SPEED = 69.0; 
+static constexpr float REVERSE_SPEED = 69.0; 
+static constexpr float PIVOT_SPEED = 69.0; 
+static constexpr unsigned long PIVOT_TIME = 100; 
 static constexpr unsigned long FULL_360_TIME = 3000;
 
 void setup(void) {
     Serial.begin(9600);
-    // us_sensor = USSensor(6,5);
     // Start after 5 seconds
     delay(5000); 
 }
@@ -28,7 +29,13 @@ void loop(void) {
     float distance;
     // Keep driving forward while opponent is in view and white tape isn't detected
     while ((distance = us_sensor.get_distance()) <= MAX_DIST && !ir_sensor.get_signal()) {
-       motor.drive_forward(distance * distance + FORWARD_SPEED); 
+        if (distance > SLOW_DOWN_DIST) {
+            motor.drive_forward(FORWARD_MAX_SPEED);
+        } else {
+            float frac = distance / SLOW_DOWN_DIST;
+            float speed = FORWARD_MAX_SPEED * frac * frac;
+            motor.drive_forward((speed < FORWARD_MIN_SPEED) ? FORWARD_MIN_SPEED : speed); 
+        }
     }
    
     motor.brake();
