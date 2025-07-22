@@ -38,18 +38,18 @@ void loop(void) {
 
     unsigned long epoch = millis();
     unsigned long inner_epoch = millis();
-    float time_mul = 1;
+    float time_mul = 1.0;
     // Only run opponent detection while within timeout and in bounds
     while (!ir_sensor.get_signal() && 
             (millis() - epoch) < FULL_360_TIME && // timeout, could be removed
             (distance = us_sensor.get_distance()) > MAX_DIST) 
     {
         unsigned long delta = millis() - inner_epoch;
-        if (delta < PIVOT_TIME*time_mul) {
+        if (delta < PIVOT_TIME * time_mul) {
             motor.pivot_right(PIVOT_SPEED);
-        } else if (delta < 3*PIVOT_TIME*time_mul) {
+        } else if (delta < 3 * PIVOT_TIME * time_mul) {
             motor.pivot_left(PIVOT_SPEED);
-        } else if (delta < 4*PIVOT_TIME*time_mul) {
+        } else if (delta < 4 * PIVOT_TIME * time_mul) {
             motor.pivot_right(PIVOT_SPEED);
         } else {
             time_mul += 0.5;
@@ -61,25 +61,25 @@ void loop(void) {
 }
 
 
-    /*
-    unsigned long time = PIVOT_TIME;
-    // Opponent detecting logic
-    while (time < 3000) {
-        if (do_for(motor, us_sensor, &Motor::Motor::pivot_right, PIVOT_SPEED, time)) {
-            break;
-        }
-        motor.brake();
-      
-        if (do_for(motor, us_sensor, &Motor::Motor::pivot_left, PIVOT_SPEED, time + time)) {
-            break;
-        }
-        motor.brake();
-
-        if (do_for(motor, us_sensor, &Motor::Motor::pivot_right, PIVOT_SPEED, time)) {
-            break;
-        }
-        motor.brake();
-
-        time += PIVOT_TIME;
+/*
+unsigned long time = PIVOT_TIME;
+// Opponent detecting logic
+while (time < 3000) {
+    if (do_for(motor, us_sensor, &Motor::Motor::pivot_right, PIVOT_SPEED, time)) {
+        break;
     }
-    */
+    motor.brake();
+  
+    if (do_for(motor, us_sensor, &Motor::Motor::pivot_left, PIVOT_SPEED, time + time)) {
+        break;
+    }
+    motor.brake();
+
+    if (do_for(motor, us_sensor, &Motor::Motor::pivot_right, PIVOT_SPEED, time)) {
+        break;
+    }
+    motor.brake();
+
+    time += PIVOT_TIME;
+}
+*/
