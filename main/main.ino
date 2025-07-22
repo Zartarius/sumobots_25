@@ -32,7 +32,10 @@ void loop(void) {
 
     // If robot is at the edge, drive in reverse, this will save it in MOST cases
     if (ir_sensor.get_signal()) {
-        do_for(motor, us_sensor, &Motor::Motor::drive_reverse, REVERSE_SPEED, 500);
+        // do_for(motor, us_sensor, &Motor::Motor::drive_reverse, REVERSE_SPEED, 500);
+        const unsigned long epoch = millis();
+        motor.drive_reverse(REVERSE_SPEED);
+        while (millis() - epoch < 500) {}
         motor.brake();
     }
 
