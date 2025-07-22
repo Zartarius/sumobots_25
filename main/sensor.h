@@ -30,8 +30,7 @@ class USSensor {
       
       float time = pulseIn(echo_pin_, HIGH);
       // distance formula
-      return (time * 0.0343) / 2;
-      // same as return time * 0.01715
+      return time * 0.01715; // (time * 0.0343) / 2;
     }
 };
 
