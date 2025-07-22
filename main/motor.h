@@ -6,6 +6,7 @@ namespace Motor {
 // Peform the specified member function for a given amount of time
 // Return true if the sensor detects anything -> This may be 
 // redundant depending on where this function is used.
+/*
 bool do_for(Motor& motor, 
             Sensor::USSensor& us_sensor,  
             void (Motor::*action)(const int),
@@ -19,6 +20,7 @@ bool do_for(Motor& motor,
             
   return distance <= MAX_DIST;
 }
+*/
 
 class Motor {
    private:
