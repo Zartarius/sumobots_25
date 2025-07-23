@@ -2,6 +2,6 @@
 
 - `main/main.ino`: Movement logic for the bot, contains `setup` and `loop` functions.
 
-- `main/Motor.h`: Contains the class definition for the motor/wheels interface.
+- `main/motor.h`: Contains the class definition for the motor/wheels interface.
 
-- `main/Sensor.h`: Contains the class definitions for both the ultrasonic sensor and infrared sensor interfaces.
+- `main/sensor.h`: Contains the class definitions for both the ultrasonic sensor (USsensor) and infrared sensor (IRsensor) interfaces.
