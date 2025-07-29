@@ -8,8 +8,7 @@ class USSensor {
     int trig_pin_;
     int echo_pin_;
   public:
-    USSensor(void) = default;
-    USSensor(int trig_pin, int echo_pin) : trig_pin_{trig_pin}, echo_pin_{echo_pin} {
+    explicit USSensor(int trig_pin, int echo_pin) : trig_pin_{trig_pin}, echo_pin_{echo_pin} {
       pinMode(trig_pin_, OUTPUT);
       pinMode(echo_pin_, INPUT);
     }
