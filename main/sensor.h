@@ -13,23 +13,32 @@ class USSensor {
       pinMode(echo_pin_, INPUT);
     }
     //USSensor(const USSensor&& s) : trig_pin_{s.trig_pin_}, echo_pin_{s.echo_pin_}  {}
-    USSensor& USSensor::operator=(USSensor&& s) {
+    USSensor& operator=(USSensor&& s) {
         trig_pin_ = s.trig_pin_;
         echo_pin_ = s.echo_pin_;
         return *this;
     }
 
     float get_distance() {
-      digitalWrite(trig_pin_, LOW);
-      // wait to clear out
-      delayMicroseconds(2);
-      digitalWrite(trig_pin_, HIGH);
-      delayMicroseconds(10);
-      digitalWrite(trig_pin_, LOW);
+      float dist = 99999;
+
+      while (dist == 99999) {
+        digitalWrite(trig_pin_, LOW);
+        // wait to clear out
+        delayMicroseconds(5);
+        digitalWrite(trig_pin_, HIGH);
+        delayMicroseconds(12);
+        digitalWrite(trig_pin_, LOW);
+        delayMicroseconds(5); 
+        
+        float time = pulseIn(echo_pin_, HIGH);
+        // distance formula
+        dist = time * 0.01715;
+        dist = dist == 0 ? 99999 : dist;
+      }
+      //Serial.println(dist);
       
-      float time = pulseIn(echo_pin_, HIGH);
-      // distance formula
-      return time * 0.01715; // (time * 0.0343) / 2;
+      return dist;// (time * 0.0343) / 2;
     }
 };
 
