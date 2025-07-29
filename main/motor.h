@@ -7,15 +7,15 @@ class Motor {
    private:
     // todo: put values here for pins
     // motor 1 - assumed left
-    static constexpr int PIN_IN1 = 1;
-    static constexpr int PIN_IN2 = 2;
+    static constexpr int PIN_IN1 = 15;
+    static constexpr int PIN_IN2 = 14;
 
     // motor 2 - assumed right
-    static constexpr int PIN_IN3 = 3;
-    static constexpr int PIN_IN4 = 4;
+    static constexpr int PIN_IN3 = 16;
+    static constexpr int PIN_IN4 = 17;
 
-    static constexpr int PIN_ENA = 5;
-    static constexpr int PIN_ENB = 6;
+    static constexpr int PIN_ENA = 9;
+    static constexpr int PIN_ENB = 10;
 
     void forward_left() {
         digitalWrite(PIN_IN1, HIGH);
