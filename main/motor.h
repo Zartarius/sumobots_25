@@ -3,6 +3,25 @@
 
 
 namespace Motor {
+// Peform the specified member function for a given amount of time
+// Return true if the sensor detects anything -> This may be 
+// redundant depending on where this function is used.
+/*
+bool do_for(Motor& motor, 
+            Sensor::USSensor& us_sensor,  
+            void (Motor::*action)(const int),
+            const int speed,
+            const unsigned long ms_delay) {
+  
+  (motor.*action)(speed);     
+  const unsigned long start = millis();
+  float distance;
+  while ((distance = us_sensor.get_distance()) > MAX_DIST && (millis() - start) < ms_delay) {}
+            
+  return distance <= MAX_DIST;
+}
+*/
+
 class Motor {
    private:
     // todo: put values here for pins
@@ -99,4 +118,4 @@ class Motor {
         brake_right();
     }
 };
-}  // namespace Motor
+}

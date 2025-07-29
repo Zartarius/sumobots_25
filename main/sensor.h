@@ -1,18 +1,19 @@
 #pragma once
 #include <Arduino.h>
 
-namespace Sensor {
 
+namespace Sensor {
 class USSensor {
   private:
-    const int trig_pin_;
-    const int echo_pin_;
+    int trig_pin_;
+    int echo_pin_;
   public:
-    explicit USSensor(int trig_pin, int echo_pin) : trig_pin_{trig_pin}, echo_pin_{echo_pin} {
+    USSensor(void) = default;
+    USSensor(int trig_pin, int echo_pin) : trig_pin_{trig_pin}, echo_pin_{echo_pin} {
       pinMode(trig_pin_, OUTPUT);
       pinMode(echo_pin_, INPUT);
     }
-    USSensor(const USSensor&& s) : trig_pin_{s.trig_pin_}, echo_pin_{s.echo_pin_}  {}
+    //USSensor(const USSensor&& s) : trig_pin_{s.trig_pin_}, echo_pin_{s.echo_pin_}  {}
     USSensor& USSensor::operator=(USSensor&& s) {
         trig_pin_ = s.trig_pin_;
         echo_pin_ = s.echo_pin_;
@@ -29,16 +30,21 @@ class USSensor {
       
       float time = pulseIn(echo_pin_, HIGH);
       // distance formula
-      return (time * 0.0343) / 2;
+      return time * 0.01715; // (time * 0.0343) / 2;
     }
 };
 
 class IRSensor {
   private:
-    const int 
+    int signal_pin_;
   public:
+    IRSensor(void) = default;
+    IRSensor(int signal_pin) : signal_pin_{signal_pin} {
+      pinMode(signal_pin_, INPUT);
+    }
 
+    bool get_signal() {
+      return digitalRead(signal_pin_);
+    }
 };
-
-
 }

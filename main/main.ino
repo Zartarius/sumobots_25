@@ -1,143 +1,99 @@
 #include <Arduino.h>
+#include "Motor.h"
+#include "Sensor.h"
 
-class Motor {
-   private:
-    // todo: put values here for pins
-    // motor 1 - assumed left
-    static constexpr int PIN_IN1 = 1;
-    static constexpr int PIN_IN2 = 2;
+static constexpr float MAX_DIST = 100.0;
+static constexpr float SLOW_DOWN_DIST = 30.0;
+static constexpr int FORWARD_MAX_SPEED = 255; 
+static constexpr int FORWARD_MIN_SPEED = 64; 
+static constexpr int REVERSE_SPEED = 64; 
+static constexpr int PIVOT_SPEED = 64; 
+static constexpr unsigned long PIVOT_TIME = 100; 
+static constexpr unsigned long FULL_360_TIME = 3000;
 
-    // motor 2 - assumed right
-    static constexpr int PIN_IN3 = 3;
-    static constexpr int PIN_IN4 = 4;
-
-    static constexpr int PIN_ENA = 5;
-    static constexpr int PIN_ENB = 6;
-
-    void forward_left() {
-        digitalWrite(PIN_IN1, HIGH);
-        digitalWrite(PIN_IN2, LOW);
-    }
-
-    void set_speed_left(int speed) {
-        analogWrite(PIN_ENA, speed);
-    }
-
-    void forward_right() {
-        digitalWrite(PIN_IN3, HIGH);
-        digitalWrite(PIN_IN4, LOW);
-    }
-
-    void set_speed_right(int speed) {
-        analogWrite(PIN_ENB, speed);
-    }
-
-    void reverse_left() {
-        digitalWrite(PIN_IN1, LOW);
-        digitalWrite(PIN_IN2, HIGH);
-    }
-
-    void reverse_right() {
-        digitalWrite(PIN_IN3, LOW);
-        digitalWrite(PIN_IN4, HIGH);
-    }
-
-    void brake_left() {
-        digitalWrite(PIN_IN1, HIGH);
-        digitalWrite(PIN_IN2, HIGH);
-    }
-
-    void brake_right() {
-        digitalWrite(PIN_IN3, HIGH);
-        digitalWrite(PIN_IN4, HIGH);
-    }
-
-   public:
-    //        ~Motor() = default;
-    Motor(void) {
-        pinMode(PIN_IN1, OUTPUT);
-        pinMode(PIN_IN2, OUTPUT);
-        pinMode(PIN_IN3, OUTPUT);
-        pinMode(PIN_IN4, OUTPUT);
-        pinMode(PIN_ENA, OUTPUT);
-        pinMode(PIN_ENB, OUTPUT);
-    }
-
-    void drive_forward(const int speed) {
-        set_speed_left(speed);
-        set_speed_right(speed);
-        forward_left();
-        forward_right();
-    }
-
-    void drive_reverse(const int speed) {
-        set_speed_left(speed);
-        set_speed_right(speed);
-        reverse_left();
-        reverse_right();
-    }
-
-    void pivot_left(const int speed) {
-        set_speed_left(speed);
-        set_speed_right(speed);
-        forward_left();
-        reverse_right();
-    }
-
-    void pivot_right(const int speed) {
-        set_speed_left(speed);
-        set_speed_right(speed);
-        forward_right();
-        reverse_left();
-    }
-    
-    void brake() {
-        brake_left();
-        brake_right();
-    }
-};
-
-class USSensor {
-  private:
-    int trig_pin_;
-    int echo_pin_;
-  public:
-    USSensor() = default;
-    USSensor(int trig_pin, int echo_pin) : trig_pin_{trig_pin}, echo_pin_{echo_pin} {
-      pinMode(trig_pin_, OUTPUT);
-      pinMode(echo_pin_, INPUT);
-    }
-    //USSensor(const USSensor&& s) : trig_pin_{s.trig_pin_}, echo_pin_{s.echo_pin_}  {}
-    USSensor& USSensor::operator=(USSensor&& s) {
-        trig_pin_ = s.trig_pin_;
-        echo_pin_ = s.echo_pin_;
-        return *this;
-    }
-
-    float get_distance() {
-      digitalWrite(trig_pin_, LOW);
-      // wait to clear out
-      delayMicroseconds(2);
-      digitalWrite(trig_pin_, HIGH);
-      delayMicroseconds(10);
-      digitalWrite(trig_pin_, LOW);
-      
-      float time = pulseIn(echo_pin_, HIGH);
-      // distance formula
-      return (time * 0.0343) / 2;
-    }
-};
+using namespace Motor;
+using namespace Sensor;
 
 Motor motor;
-USSensor sensor;
+USSensor us_sensor = USSensor(6, 5);
+IRSensor ir_sensor;
 
 void setup(void) {
-  Serial.begin(9600);
-  sensor = USSensor(6,5);
+    Serial.begin(9600);
+    // Start after 5 seconds
+    delay(5000); 
 }
-
-
 
 void loop(void) {
-  Serial.println(sensor.get_distance());
+    float distance;
+    // Keep driving forward while opponent is in view and white tape isn't detected
+    while ((distance = us_sensor.get_distance()) <= MAX_DIST && 
+            !ir_sensor.get_signal()) 
+    {
+        if (distance > SLOW_DOWN_DIST) {
+            motor.drive_forward(FORWARD_MAX_SPEED);
+        } else {
+            float frac = distance / SLOW_DOWN_DIST;
+            float speed = FORWARD_MAX_SPEED * frac * frac;
+            motor.drive_forward((speed < FORWARD_MIN_SPEED) ? FORWARD_MIN_SPEED : speed); 
+        }
+    }
+   
+    motor.brake();
+
+    // If robot is at the edge, drive in reverse, this will save it in MOST cases
+    if (ir_sensor.get_signal()) {
+        // do_for(motor, us_sensor, &Motor::Motor::drive_reverse, REVERSE_SPEED, 500);
+        const unsigned long epoch = millis();
+        motor.drive_reverse(REVERSE_SPEED);
+        while (millis() - epoch < 500) {}
+        motor.brake();
+    }
+
+    unsigned long epoch = millis();
+    unsigned long inner_epoch = millis();
+    float time_mul = 1.0;
+    // Only run opponent detection while within timeout and in bounds
+    while (!ir_sensor.get_signal() && 
+            (millis() - epoch) < FULL_360_TIME && // timeout, could be removed
+            (distance = us_sensor.get_distance()) > MAX_DIST) 
+    {
+        unsigned long delta = millis() - inner_epoch;
+        if (delta < PIVOT_TIME * time_mul) {
+            motor.pivot_right(PIVOT_SPEED);
+        } else if (delta < 3 * PIVOT_TIME * time_mul) {
+            motor.pivot_left(PIVOT_SPEED);
+        } else if (delta < 4 * PIVOT_TIME * time_mul) {
+            motor.pivot_right(PIVOT_SPEED);
+        } else {
+            time_mul += 0.5;
+            inner_epoch = millis();
+        }
+    }
+          
+    motor.brake();
 }
+
+
+/*
+unsigned long time = PIVOT_TIME;
+// Opponent detecting logic
+while (time < 3000) {
+    if (do_for(motor, us_sensor, &Motor::Motor::pivot_right, PIVOT_SPEED, time)) {
+        break;
+    }
+    motor.brake();
+  
+    if (do_for(motor, us_sensor, &Motor::Motor::pivot_left, PIVOT_SPEED, time + time)) {
+        break;
+    }
+    motor.brake();
+
+    if (do_for(motor, us_sensor, &Motor::Motor::pivot_right, PIVOT_SPEED, time)) {
+        break;
+    }
+    motor.brake();
+
+    time += PIVOT_TIME;
+}
+*/
