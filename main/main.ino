@@ -2,19 +2,24 @@
 #include "Sensor.h"
 #include <Arduino.h>
 
+// CONFIG
 static constexpr float MAX_DIST = 120.0;
 static constexpr float SLOW_DOWN_DIST = 30.0;
 static constexpr int FORWARD_MAX_SPEED = 255;
 static constexpr int FORWARD_MIN_SPEED = 128;
 static constexpr int REVERSE_SPEED = 64;
 static constexpr int PIVOT_SPEED = 100;
-static constexpr unsigned long PIVOT_TIME = 250;
-static constexpr unsigned long FULL_360_TIME = 10000; // ignored
-static constexpr unsigned long MIN_GAP = 5;
+static constexpr unsigned long REVERSE_TIME = 500;
+static constexpr unsigned long BRAKE_TIME = 200;
+static constexpr unsigned long PIVOT_TIME = 200;
+
+#define DEBUG
 
 Motor::Motor motor;
-Sensor::USSensor us_sensor{4, 5};
+
+// SENSORS
 // 1st trig 2nd echo
+Sensor::USSensor us_sensor{4, 5};
 Sensor::USSensor us_sensor_left{7, 6};
 Sensor::USSensor us_sensor_right{12, 11};
 Sensor::IRSensor ir_sensor{2};
@@ -28,21 +33,22 @@ void setup(void) {
 }
 
 void loop(void) {
-  float distance = us_sensor.get_distance();
   // Keep driving forward while opponent is in view and white tape isn't
   // detected
 
-  /*
   // If robot is at the edge, drive in reverse, this will save it in MOST cases
   if (ir_sensor.get_signal()) {
-    // do_for(motor, us_sensor, &Motor::Motor::drive_reverse, REVERSE_SPEED,
-    // 500);
+    #ifdef DEBUG
     Serial.println("reverse");
+    #endif
     motor.drive_reverse(REVERSE_SPEED);
-    delay(500);
+    delay(REVERSE_TIME);
     motor.brake();
+    delay(BRAKE_TIME);
     return;
-  }*/
+  }
+
+  float distance = us_sensor.get_distance();
 
   if ( distance <= MAX_DIST ) {
     #ifdef DEBUG
@@ -81,19 +87,19 @@ void loop(void) {
       motor.pivot_right(PIVOT_SPEED);
     } else if (dist_delta < 0) {
       #ifdef DEBUG
-      Serial.println("left");
+      Serial.println("right");
       #endif
       motor.pivot_right(PIVOT_SPEED);
     } else {
       #ifdef DEBUG
-      Serial.println("right");
+      Serial.println("left");
       #endif
       motor.pivot_left(PIVOT_SPEED);
     }
 
-    delay(200);
+    delay(PIVOT_TIME);
     motor.brake();
-    delay(100);
+    delay(BRAKE_TIME);
   }
 
 }
