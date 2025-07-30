@@ -24,16 +24,27 @@ void setup(void) {
   Serial.println("Booting...");
   // Start after 5 seconds
   delay(5000);
-  Serial.println("sybau");
+  Serial.println("Ready!");
 }
 
 void loop(void) {
-  float distance;
+  float distance = us_sensor.get_distance();
   // Keep driving forward while opponent is in view and white tape isn't
   // detected
 
-  while ((distance = us_sensor.get_distance()) < MAX_DIST/* &&
-         !ir_sensor.get_signal()*/) {
+  /*
+  // If robot is at the edge, drive in reverse, this will save it in MOST cases
+  if (ir_sensor.get_signal()) {
+    // do_for(motor, us_sensor, &Motor::Motor::drive_reverse, REVERSE_SPEED,
+    // 500);
+    Serial.println("reverse");
+    motor.drive_reverse(REVERSE_SPEED);
+    delay(500);
+    motor.brake();
+    return;
+  }*/
+
+  if ( distance <= MAX_DIST ) {
     #ifdef DEBUG
     Serial.println("forward");
     #endif
@@ -46,27 +57,7 @@ void loop(void) {
       motor.drive_forward((speed < FORWARD_MIN_SPEED) ? FORWARD_MIN_SPEED
                                                       : speed);
     }
-  }
-
-  /*
-  // If robot is at the edge, drive in reverse, this will save it in MOST cases
-  if (ir_sensor.get_signal()) {
-    // do_for(motor, us_sensor, &Motor::Motor::drive_reverse, REVERSE_SPEED,
-    // 500);
-    Serial.println("reverse");
-    const unsigned long epoch = millis();
-    motor.drive_reverse(REVERSE_SPEED);
-    delay(500);
-    motor.brake();
-  }*/
-
-  unsigned long epoch = millis();
-  float time_mul = 1.0;
-
-  // Only run opponent detection while within timeout and in bounds
-  while (/*!ir_sensor.get_signal() && */
-         /*(millis() - epoch) < FULL_360_TIME && // timeout, could be removed */
-             (distance = us_sensor.get_distance()) > MAX_DIST) {
+  } else {
 
     float left_distance = us_sensor_left.get_distance();
     float right_distance = us_sensor_right.get_distance();
@@ -83,8 +74,7 @@ void loop(void) {
     Serial.println(dist_delta);
     #endif
 
-    if ((left_distance > MAX_DIST &&
-         right_distance > MAX_DIST) /*|| abs(dist_delta) < MIN_GAP*/) {
+    if ((left_distance > MAX_DIST && right_distance > MAX_DIST)) {
       #ifdef DEBUG
       Serial.println("couldnt find, pivot cycle");
       #endif
@@ -101,12 +91,9 @@ void loop(void) {
       motor.pivot_left(PIVOT_SPEED);
     }
 
-    // second chance
-    float center_distance = us_sensor.get_distance();
-    if (center_distance < DETECTION_THRESHOLD) break;
-
     delay(200);
     motor.brake();
-    delay(200);
+    delay(100);
   }
+
 }
