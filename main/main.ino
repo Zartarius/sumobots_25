@@ -3,14 +3,16 @@
 #include <Arduino.h>
 
 // CONFIG
-static constexpr float MAX_DIST = 120.0;
+static constexpr float MAX_DIST = 150.0;
 static constexpr float SLOW_DOWN_DIST = 30.0;
 static constexpr int FORWARD_MAX_SPEED = 255;
-static constexpr int FORWARD_MIN_SPEED = 128;
+static constexpr int FORWARD_MIN_SPEED = 85;
 static constexpr int REVERSE_SPEED = 64;
+static constexpr int TURN_AROUND_SPEED = 150;
 static constexpr int PIVOT_SPEED = 100;
 static constexpr unsigned long REVERSE_TIME = 500;
-static constexpr unsigned long BRAKE_TIME = 200;
+static constexpr unsigned long TURN_AROUND_TIME = 700;
+static constexpr unsigned long BRAKE_TIME = 100;
 static constexpr unsigned long PIVOT_TIME = 200;
 
 #define DEBUG
@@ -37,18 +39,24 @@ void loop(void) {
   // detected
 
   // If robot is at the edge, drive in reverse, this will save it in MOST cases
+  /*
   if (ir_sensor.get_signal()) {
     #ifdef DEBUG
     Serial.println("reverse");
     #endif
     motor.drive_reverse(REVERSE_SPEED);
     delay(REVERSE_TIME);
-    motor.brake();
-    delay(BRAKE_TIME);
+    motor.pivot_right(TURN_AROUND_SPEED);
+    delay(TURN_AROUND_TIME);
+    //motor.brake();
+    //delay(BRAKE_TIME);
     return;
-  }
+  } */
 
   float distance = us_sensor.get_distance();
+
+  Serial.print("Center dist: ");
+  Serial.println(distance);
 
   if ( distance <= MAX_DIST ) {
     #ifdef DEBUG
@@ -80,11 +88,13 @@ void loop(void) {
     Serial.println(dist_delta);
     #endif
 
-    if ((left_distance > MAX_DIST && right_distance > MAX_DIST)) {
+    bool out_of_range = (left_distance > MAX_DIST && right_distance > MAX_DIST);
+
+    if (out_of_range) {
       #ifdef DEBUG
       Serial.println("couldnt find, pivot cycle");
       #endif
-      motor.pivot_right(PIVOT_SPEED);
+      motor.drive_forward(PIVOT_SPEED);
     } else if (dist_delta < 0) {
       #ifdef DEBUG
       Serial.println("right");
@@ -97,9 +107,11 @@ void loop(void) {
       motor.pivot_left(PIVOT_SPEED);
     }
 
-    delay(PIVOT_TIME);
-    motor.brake();
-    delay(BRAKE_TIME);
+    if (!out_of_range) {
+      delay(PIVOT_TIME);
+      motor.brake();
+      delay(BRAKE_TIME);
+    }
   }
 
 }

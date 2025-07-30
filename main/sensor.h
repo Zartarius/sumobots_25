@@ -1,6 +1,8 @@
 #pragma once
 #include <Arduino.h>
 
+static constexpr int MAX_ATTEMPTS = 3;
+
 namespace Sensor {
 class USSensor {
   private:
@@ -19,13 +21,16 @@ class USSensor {
     }
 
     float get_distance() {
-      float dist = 99999, time;
+      float dist = 0;
+      int attempts = 0;
+
+      do {
       
       digitalWrite(trig_pin_, HIGH);
       delayMicroseconds(10);
       digitalWrite(trig_pin_, LOW);
       
-      time = pulseIn(echo_pin_, HIGH);
+      float time = pulseIn(echo_pin_, HIGH);
       // distance formula
       dist = time * 0.017;
       dist = dist == 0 ? 99999 : dist;
@@ -36,6 +41,20 @@ class USSensor {
       Serial.print(" Dist: ");
       Serial.println(dist);
       #endif
+
+        bool shitty = (dist == 0 || dist > 900);
+        if (shitty) {
+          #ifdef DEBUG
+          Serial.println("Unshittify");
+          #endif
+          // turn that thang off and on again`  
+          delay(100);
+          pinMode(echo_pin_, OUTPUT);
+          digitalWrite(echo_pin_, LOW);
+          delay(100);
+          pinMode(echoPort, INPUT);
+        }
+      } while (shitty && ++attempts < MAX_ATTEMPTS);
 
       
       delay(250);
